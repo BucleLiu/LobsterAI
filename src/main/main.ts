@@ -1,3 +1,28 @@
+/**
+ * LobsterAI 主进程入口
+ *
+ * 这是 Electron 应用的主进程，负责：
+ * - 应用生命周期管理（启动、退出、更新）
+ * - 主窗口创建和管理
+ * - IPC 通信处理（渲染进程与主进程通信）
+ * - AI 引擎管理（Claude SDK / OpenClaw 引擎）
+ * - Skill 系统管理
+ * - IM 网关管理（钉钉、飞书、Telegram、Discord、QQ、企业微信、POPO、微信等）
+ * - 系统托盘管理
+ * - 数据持久化（SQLite）
+ * - 用户记忆管理
+ * - MCP 服务器管理
+ * - 定时任务管理
+ *
+ * 架构说明：
+ * - 主进程（main.ts）负责所有系统级操作
+ * - 渲染进程通过 IPC 与主进程通信
+ * - 使用 sql.js 进行数据存储
+ * - 支持多引擎（Claude / OpenClaw）
+ *
+ * @module main
+ */
+
 import { app, BrowserWindow, ipcMain, session, nativeTheme, dialog, shell, nativeImage, systemPreferences, Menu, protocol, net, powerMonitor, powerSaveBlocker } from 'electron';
 import type { WebContents } from 'electron';
 import path from 'path';
@@ -73,17 +98,29 @@ import {
 app.name = APP_NAME;
 app.setName(APP_NAME);
 
+/** 非法文件名字符正则表达式 */
 const INVALID_FILE_NAME_PATTERN = /[<>:"/\\|?*\u0000-\u001F]/g;
+/** 用户记忆最小条目数 */
 const MIN_MEMORY_USER_MEMORIES_MAX_ITEMS = 1;
+/** 用户记忆最大条目数 */
 const MAX_MEMORY_USER_MEMORIES_MAX_ITEMS = 60;
+/** IPC 消息内容最大字符数 */
 const IPC_MESSAGE_CONTENT_MAX_CHARS = 120_000;
+/** IPC 更新内容最大字符数 */
 const IPC_UPDATE_CONTENT_MAX_CHARS = 120_000;
+/** IPC 字符串最大字符数 */
 const IPC_STRING_MAX_CHARS = 4_000;
+/** IPC 数据最大深度 */
 const IPC_MAX_DEPTH = 5;
+/** IPC 对象最大键数 */
 const IPC_MAX_KEYS = 80;
+/** IPC 数组最大条目数 */
 const IPC_MAX_ITEMS = 40;
+/** 内联附件最大字节数 (25MB) */
 const MAX_INLINE_ATTACHMENT_BYTES = 25 * 1024 * 1024;
+/** 引擎未就绪错误码 */
 const ENGINE_NOT_READY_CODE = 'ENGINE_NOT_READY';
+/** 定时任务通道选项 */
 const SCHEDULED_TASK_CHANNEL_OPTIONS = [
   { value: 'last', label: 'Last conversation' },
   { value: 'dingtalk-connector', label: 'DingTalk' },
@@ -94,6 +131,7 @@ const SCHEDULED_TASK_CHANNEL_OPTIONS = [
   { value: 'wecom', label: 'WeCom' },
   { value: 'popo', label: 'POPO' },
 ] as const;
+/** MIME 类型到扩展名映射 */
 const MIME_EXTENSION_MAP: Record<string, string> = {
   'image/png': '.png',
   'image/jpeg': '.jpg',
@@ -108,11 +146,24 @@ const MIME_EXTENSION_MAP: Record<string, string> = {
   'text/csv': '.csv',
 };
 
+/**
+ * 清理导出文件名
+ * 移除非法字符，替换空白字符
+ *
+ * @param {string} value - 原始文件名
+ * @returns {string} 清理后的文件名
+ */
 const sanitizeExportFileName = (value: string): string => {
   const sanitized = value.replace(INVALID_FILE_NAME_PATTERN, ' ').replace(/\s+/g, ' ').trim();
   return sanitized || 'cowork-session';
 };
 
+/**
+ * 清理附件文件名
+ *
+ * @param {string} [value] - 原始文件名
+ * @returns {string} 清理后的文件名
+ */
 const sanitizeAttachmentFileName = (value?: string): string => {
   const raw = typeof value === 'string' ? value.trim() : '';
   if (!raw) return 'attachment';
@@ -121,6 +172,13 @@ const sanitizeAttachmentFileName = (value?: string): string => {
   return sanitized || 'attachment';
 };
 
+/**
+ * 推断附件扩展名
+ *
+ * @param {string} fileName - 文件名
+ * @param {string} [mimeType] - MIME 类型
+ * @returns {string} 扩展名（包含点）
+ */
 const inferAttachmentExtension = (fileName: string, mimeType?: string): string => {
   const fromName = path.extname(fileName).toLowerCase();
   if (fromName) {
@@ -133,6 +191,12 @@ const inferAttachmentExtension = (fileName: string, mimeType?: string): string =
   return '';
 };
 
+/**
+ * 解析内联附件目录
+ *
+ * @param {string} [cwd] - 工作目录
+ * @returns {string} 附件目录路径
+ */
 const resolveInlineAttachmentDir = (cwd?: string): string => {
   const trimmed = typeof cwd === 'string' ? cwd.trim() : '';
   if (trimmed) {
@@ -144,16 +208,39 @@ const resolveInlineAttachmentDir = (cwd?: string): string => {
   return path.join(app.getPath('temp'), 'lobsterai', 'attachments');
 };
 
+/**
+ * 确保文件名为 PNG 格式
+ *
+ * @param {string} value - 文件名
+ * @returns {string} 带 .png 扩展名的文件名
+ */
 const ensurePngFileName = (value: string): string => {
   return value.toLowerCase().endsWith('.png') ? value : `${value}.png`;
 };
 
+/**
+ * 确保文件名为 ZIP 格式
+ *
+ * @param {string} value - 文件名
+ * @returns {string} 带 .zip 扩展名的文件名
+ */
 const ensureZipFileName = (value: string): string => {
   return value.toLowerCase().endsWith('.zip') ? value : `${value}.zip`;
 };
 
+/**
+ * 将数字格式化为两位数字符串
+ *
+ * @param {number} value - 数字
+ * @returns {string} 两位数字符串（不足补零）
+ */
 const padTwoDigits = (value: number): string => value.toString().padStart(2, '0');
 
+/**
+ * 构建日志导出文件名
+ *
+ * @returns {string} 格式为 lobsterai-logs-YYYYMMDD-HHMMSS.zip 的文件名
+ */
 const buildLogExportFileName = (): string => {
   const now = new Date();
   const datePart = `${now.getFullYear()}${padTwoDigits(now.getMonth() + 1)}${padTwoDigits(now.getDate())}`;
@@ -161,11 +248,27 @@ const buildLogExportFileName = (): string => {
   return `lobsterai-logs-${datePart}-${timePart}.zip`;
 };
 
+/**
+ * 截断 IPC 字符串
+ *
+ * @param {string} value - 原始字符串
+ * @param {number} maxChars - 最大字符数
+ * @returns {string} 截断后的字符串
+ */
 const truncateIpcString = (value: string, maxChars: number): string => {
   if (value.length <= maxChars) return value;
   return `${value.slice(0, maxChars)}\n...[truncated in main IPC forwarding]`;
 };
 
+/**
+ * 清理 IPC 数据负载
+ * 递归处理数据，限制大小和深度，防止 IPC 传输问题
+ *
+ * @param {unknown} value - 要清理的数据
+ * @param {number} [depth=0] - 当前深度
+ * @param {WeakSet<object>} [seen] - 已访问对象集合（用于循环引用检测）
+ * @returns {unknown} 清理后的数据
+ */
 const sanitizeIpcPayload = (value: unknown, depth = 0, seen?: WeakSet<object>): unknown => {
   const localSeen = seen ?? new WeakSet<object>();
   if (
