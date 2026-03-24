@@ -1,3 +1,21 @@
+/**
+ * 协作会话数据存储模块
+ *
+ * 管理协作会话的所有数据，包括：
+ * - 会话管理（创建、查询、更新、删除）
+ * - 消息管理（添加、查询、流式更新）
+ * - 用户记忆管理（创建、更新、去重、搜索）
+ * - 工作目录历史
+ *
+ * 记忆系统特点：
+ * - 支持显式记忆（用户主动添加）和隐式记忆（自动提取）
+ * - 使用多种算法计算记忆相似度（token 重叠、字符 bigram Dice 系数）
+ * - 支持记忆去重和合并
+ * - 可配置的守卫级别（strict/standard/relaxed）
+ *
+ * @module coworkStore
+ */
+
 import { app } from 'electron';
 import crypto from 'crypto';
 import fs from 'fs';
@@ -12,13 +30,26 @@ import {
 } from './libs/coworkMemoryExtractor';
 import { judgeMemoryCandidate } from './libs/coworkMemoryJudge';
 
-// Default working directory for new users
+/**
+ * 获取默认工作目录
+ *
+ * @returns {string} 默认工作目录路径
+ */
 const getDefaultWorkingDirectory = (): string => {
   return path.join(os.homedir(), 'lobsterai', 'project');
 };
 
+/
+/** 任务工作区容器目录名 */
 const TASK_WORKSPACE_CONTAINER_DIR = '.lobsterai-tasks';
 
+/**
+ * 规范化最近工作区路径
+ * 如果路径包含任务容器目录，返回父目录
+ *
+ * @param {string} cwd - 工作目录路径
+ * @returns {string} 规范化后的路径
+ */
 const normalizeRecentWorkspacePath = (cwd: string): string => {
   const resolved = path.resolve(cwd);
   const marker = `${path.sep}${TASK_WORKSPACE_CONTAINER_DIR}${path.sep}`;
@@ -29,22 +60,45 @@ const normalizeRecentWorkspacePath = (cwd: string): string => {
   return resolved;
 };
 
+/** 默认启用记忆功能 */
 const DEFAULT_MEMORY_ENABLED = true;
+/** 默认启用隐式记忆更新 */
 const DEFAULT_MEMORY_IMPLICIT_UPDATE_ENABLED = true;
+/** 默认禁用 LLM 记忆判断 */
 const DEFAULT_MEMORY_LLM_JUDGE_ENABLED = false;
+/** 默认记忆守卫级别 */
 const DEFAULT_MEMORY_GUARD_LEVEL: CoworkMemoryGuardLevel = 'strict';
+/** 默认用户记忆最大条目数 */
 const DEFAULT_MEMORY_USER_MEMORIES_MAX_ITEMS = 12;
+/** 用户记忆最小条目数 */
 const MIN_MEMORY_USER_MEMORIES_MAX_ITEMS = 1;
+/** 用户记忆最大条目数 */
 const MAX_MEMORY_USER_MEMORIES_MAX_ITEMS = 60;
+/** 记忆近重复检测最小相似度分数 */
 const MEMORY_NEAR_DUPLICATE_MIN_SCORE = 0.82;
+/** 记忆过程性文本检测正则 */
 const MEMORY_PROCEDURAL_TEXT_RE = /(执行以下命令|run\s+(?:the\s+)?following\s+command|\b(?:cd|npm|pnpm|yarn|node|python|bash|sh|git|curl|wget)\b|\$[A-Z_][A-Z0-9_]*|&&|--[a-z0-9-]+|\/tmp\/|\.sh\b|\.bat\b|\.ps1\b)/i;
+/** 记忆助手风格文本检测正则 */
 const MEMORY_ASSISTANT_STYLE_TEXT_RE = /^(?:使用|use)\s+[A-Za-z0-9._-]+\s*(?:技能|skill)/i;
 
+/**
+ * 规范化记忆守卫级别
+ *
+ * @param {string | undefined} value - 输入值
+ * @returns {CoworkMemoryGuardLevel} 规范化的守卫级别
+ */
 function normalizeMemoryGuardLevel(value: string | undefined): CoworkMemoryGuardLevel {
   if (value === 'strict' || value === 'standard' || value === 'relaxed') return value;
   return DEFAULT_MEMORY_GUARD_LEVEL;
 }
 
+/**
+ * 解析布尔配置值
+ *
+ * @param {string | undefined} value - 配置字符串
+ * @param {boolean} fallback - 默认值
+ * @returns {boolean} 解析后的布尔值
+ */
 function parseBooleanConfig(value: string | undefined, fallback: boolean): boolean {
   if (!value) return fallback;
   const normalized = value.trim().toLowerCase();
@@ -53,6 +107,12 @@ function parseBooleanConfig(value: string | undefined, fallback: boolean): boole
   return fallback;
 }
 
+/**
+ * 限制用户记忆最大条目数在有效范围内
+ *
+ * @param {number} value - 输入值
+ * @returns {number} 限制后的值
+ */
 function clampMemoryUserMemoriesMaxItems(value: number): number {
   if (!Number.isFinite(value)) return DEFAULT_MEMORY_USER_MEMORIES_MAX_ITEMS;
   return Math.max(
@@ -61,10 +121,24 @@ function clampMemoryUserMemoriesMaxItems(value: number): number {
   );
 }
 
+/**
+ * 规范化记忆文本
+ * 将多个空白字符替换为单个空格并去除首尾空白
+ *
+ * @param {string} value - 原始文本
+ * @returns {string} 规范化后的文本
+ */
 function normalizeMemoryText(value: string): string {
   return value.replace(/\s+/g, ' ').trim();
 }
 
+/**
+ * 提取会话搜索词
+ * 从输入文本中提取用于搜索记忆的关键词
+ *
+ * @param {string} value - 输入文本
+ * @returns {string[]} 搜索词列表（最多 8 个）
+ */
 function extractConversationSearchTerms(value: string): string[] {
   const normalized = normalizeMemoryText(value).toLowerCase();
   if (!normalized) return [];
@@ -95,6 +169,13 @@ function extractConversationSearchTerms(value: string): string[] {
   return terms.slice(0, 8);
 }
 
+/**
+ * 规范化记忆匹配键
+ * 移除特殊字符，统一格式用于匹配
+ *
+ * @param {string} value - 原始文本
+ * @returns {string} 规范化后的匹配键
+ */
 function normalizeMemoryMatchKey(value: string): string {
   return normalizeMemoryText(value)
     .toLowerCase()
@@ -104,6 +185,13 @@ function normalizeMemoryMatchKey(value: string): string {
     .trim();
 }
 
+/**
+ * 规范化记忆语义键
+ * 移除人称代词，提取核心语义内容
+ *
+ * @param {string} value - 原始文本
+ * @returns {string} 规范化后的语义键
+ */
 function normalizeMemorySemanticKey(value: string): string {
   const key = normalizeMemoryMatchKey(value);
   if (!key) return '';
@@ -114,6 +202,12 @@ function normalizeMemorySemanticKey(value: string): string {
     .trim();
 }
 
+/**
+ * 构建词频映射
+ *
+ * @param {string} value - 输入文本
+ * @returns {Map<string, number>} 词频映射
+ */
 function buildTokenFrequencyMap(value: string): Map<string, number> {
   const tokens = value
     .split(/\s+/g)
@@ -126,6 +220,14 @@ function buildTokenFrequencyMap(value: string): Map<string, number> {
   return map;
 }
 
+/**
+ * 计算两个字符串的 token 重叠分数
+ * 使用 Jaccard 相似度的变体，基于词频计算
+ *
+ * @param {string} left - 第一个字符串
+ * @param {string} right - 第二个字符串
+ * @returns {number} 相似度分数 (0-1)
+ */
 function scoreTokenOverlap(left: string, right: string): number {
   const leftMap = buildTokenFrequencyMap(left);
   const rightMap = buildTokenFrequencyMap(right);
@@ -145,6 +247,13 @@ function scoreTokenOverlap(left: string, right: string): number {
   return intersection / denominator;
 }
 
+/**
+ * 构建字符 bigram 频率映射
+ * 用于计算 Dice 系数
+ *
+ * @param {string} value - 输入文本
+ * @returns {Map<string, number>} bigram 频率映射
+ */
 function buildCharacterBigramMap(value: string): Map<string, number> {
   const compact = value.replace(/\s+/g, '').trim();
   if (!compact) return new Map<string, number>();
@@ -158,6 +267,14 @@ function buildCharacterBigramMap(value: string): Map<string, number> {
   return map;
 }
 
+/**
+ * 计算两个字符串的字符 bigram Dice 系数
+ * Dice 系数 = 2 * |A ∩ B| / (|A| + |B|)
+ *
+ * @param {string} left - 第一个字符串
+ * @param {string} right - 第二个字符串
+ * @returns {number} Dice 系数 (0-1)
+ */
 function scoreCharacterBigramDice(left: string, right: string): number {
   const leftMap = buildCharacterBigramMap(left);
   const rightMap = buildCharacterBigramMap(right);
@@ -177,8 +294,26 @@ function scoreCharacterBigramDice(left: string, right: string): number {
   return (2 * intersection) / denominator;
 }
 
+/**
+ * 计算记忆相似度分数
+ *
+ * 综合使用多种算法：
+ * 1. 精确匹配检查
+ * 2. 去空白后的匹配检查
+ * 3. 包含关系检查（短语分数）
+ * 4. Token 重叠分数
+ * 5. 字符 bigram Dice 系数
+ *
+ * 返回上述算法的最高分数
+ *
+ * @param {string} left - 第一个记忆文本
+ * @param {string} right - 第二个记忆文本
+ * @returns {number} 相似度分数 (0-1)
+ */
 function scoreMemorySimilarity(left: string, right: string): number {
+  // 空值检查：任一为空则相似度为 0
   if (!left || !right) return 0;
+  // 精确匹配
   if (left === right) return 1;
 
   const compactLeft = left.replace(/\s+/g, '');
@@ -480,15 +615,44 @@ interface CoworkUserMemoryRow {
   last_used_at: number | null;
 }
 
+/**
+ * 协作会话存储管理类
+ *
+ * 提供协作会话和记忆的完整 CRUD 操作：
+ * - 会话管理：创建、查询、更新、删除会话
+ * - 消息管理：添加消息、流式更新、查询历史
+ * - 记忆管理：创建、更新、去重、搜索记忆
+ * - 配置管理：读写协作配置
+ *
+ * 记忆系统支持：
+ * - 显式记忆：用户主动添加
+ * - 隐式记忆：从对话中自动提取
+ * - 记忆去重：基于相似度计算合并重复记忆
+ * - 记忆守卫：可配置的过滤级别
+ */
 export class CoworkStore {
   private db: Database;
   private saveDb: () => void;
 
+  /**
+   * 创建 CoworkStore 实例
+   *
+   * @param {Database} db - sql.js 数据库实例
+   * @param {Function} saveDb - 保存数据库的回调函数
+   */
   constructor(db: Database, saveDb: () => void) {
     this.db = db;
     this.saveDb = saveDb;
   }
 
+  /**
+   * 执行 SQL 查询并返回单行结果
+   *
+   * @template T 结果类型
+   * @param {string} sql - SQL 查询语句
+   * @param {Array} params - 查询参数
+   * @returns {T | undefined} 查询结果，无结果时返回 undefined
+   */
   private getOne<T>(sql: string, params: (string | number | null)[] = []): T | undefined {
     const result = this.db.exec(sql, params);
     if (!result[0]?.values[0]) return undefined;
@@ -501,6 +665,14 @@ export class CoworkStore {
     return row as T;
   }
 
+  /**
+   * 执行 SQL 查询并返回所有结果
+   *
+   * @template T 结果类型
+   * @param {string} sql - SQL 查询语句
+   * @param {Array} params - 查询参数
+   * @returns {T[]} 查询结果数组
+   */
   private getAll<T>(sql: string, params: (string | number | null)[] = []): T[] {
     const result = this.db.exec(sql, params);
     if (!result[0]?.values) return [];

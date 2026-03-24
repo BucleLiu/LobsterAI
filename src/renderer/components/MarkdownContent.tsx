@@ -1,3 +1,16 @@
+/**
+ * Markdown 内容渲染组件
+ *
+ * 支持以下特性：
+ * - GitHub Flavored Markdown (GFM)
+ * - LaTeX 数学公式（行内和块级）
+ * - 代码语法高亮
+ * - 文件链接处理（file:// 协议）
+ * - 安全的 URL 过滤
+ *
+ * @module components/MarkdownContent
+ */
+
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 // @ts-ignore
@@ -15,20 +28,37 @@ import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { ClipboardDocumentIcon, CheckIcon, DocumentIcon, FolderIcon } from '@heroicons/react/24/outline';
 import { i18nService } from '../services/i18n';
 
+/** 代码块最大行数限制 */
 const CODE_BLOCK_LINE_LIMIT = 200;
+/** 代码块最大字符数限制 */
 const CODE_BLOCK_CHAR_LIMIT = 20000;
+/** 语法高亮样式配置 */
 const SYNTAX_HIGHLIGHTER_STYLE = {
   margin: 0,
   borderRadius: 0,
   background: '#282c34',
 };
+/** 安全的 URL 协议白名单 */
 const SAFE_URL_PROTOCOLS = new Set(['http', 'https', 'mailto', 'tel', 'file']);
 
+/**
+ * 编码文件 URL
+ * 对特殊字符进行编码，特别是括号
+ *
+ * @param url - 原始 URL
+ * @returns 编码后的 URL
+ */
 const encodeFileUrl = (url: string): string => {
   const encoded = encodeURI(url);
   return encoded.replace(/\(/g, '%28').replace(/\)/g, '%29');
 };
 
+/**
+ * 编码 Markdown 链接中的文件目标
+ *
+ * @param dest - 目标字符串
+ * @returns 编码后的目标字符串
+ */
 const encodeFileUrlDestination = (dest: string): string => {
   const trimmed = dest.trim();
   if (!/^<?file:\/\//i.test(trimmed)) {
@@ -48,6 +78,14 @@ const encodeFileUrlDestination = (dest: string): string => {
   return dest.replace(trimmed, `${prefix}${encoded}${suffix}`);
 };
 
+/**
+ * 查找 Markdown 链接的结束位置
+ * 处理嵌套括号的情况
+ *
+ * @param input - 输入字符串
+ * @param start - 开始搜索位置（'(' 后的位置）
+ * @returns 结束位置索引，未找到返回 -1
+ */
 const findMarkdownLinkEnd = (input: string, start: number): number => {
   let depth = 1;
   for (let i = start; i < input.length; i += 1) {
@@ -73,6 +111,13 @@ const findMarkdownLinkEnd = (input: string, start: number): number => {
   return -1;
 };
 
+/**
+ * 编码 Markdown 内容中的 file:// URL
+ * 确保文件链接在 Markdown 中正确显示
+ *
+ * @param content - Markdown 内容
+ * @returns 处理后的内容
+ */
 const encodeFileUrlsInMarkdown = (content: string): string => {
   if (!content.includes('file://')) {
     return content;
@@ -104,11 +149,19 @@ const encodeFileUrlsInMarkdown = (content: string): string => {
 };
 
 /**
- * Normalize multi-line display math blocks for remark-math compatibility.
- * remark-math treats $$ like code fences: opening $$ must be on its own line,
- * and closing $$ must also be on its own line.
- * LLMs often output $$content\n...\ncontent$$ which breaks parsing and corrupts
- * all subsequent markdown. This function normalizes such blocks.
+ * 规范化显示数学公式块
+ * remark-math 要求 $$ 必须单独成行，此函数修复 LLM 输出的格式问题
+ *
+ * remark-math 将 $$ 视为代码围栏：开头的 $$ 必须单独成行，
+ * 结尾的 $$ 也必须单独成行。
+ * LLM 经常输出 $$content\n...\ncontent$$ 这种格式会破坏解析。
+ *
+ * @param content - Markdown 内容
+ * @returns 规范化后的内容
+ *
+ * @example
+ * 输入: $$a+b\nc+d$$
+ * 输出: $$\na+b\nc+d\n$$
  */
 const normalizeDisplayMath = (content: string): string => {
   return content.replace(/\$\$([\s\S]+?)\$\$/g, (match, inner) => {
@@ -119,6 +172,13 @@ const normalizeDisplayMath = (content: string): string => {
   });
 };
 
+/**
+ * 安全 URL 转换
+ * 只允许安全的协议（http, https, mailto, tel, file）
+ *
+ * @param url - 原始 URL
+ * @returns 安全的 URL 或空字符串
+ */
 const safeUrlTransform = (url: string): string => {
   const trimmed = url.trim();
   if (!trimmed) return trimmed;

@@ -1,6 +1,24 @@
+/**
+ * MCP (Model Context Protocol) 服务器存储模块
+ *
+ * 管理 MCP 服务器的配置信息，包括：
+ * - 服务器基本配置（名称、描述、启用状态）
+ * - 传输配置（stdio/sse/http）
+ * - 认证配置（命令、参数、环境变量、URL、请求头）
+ * - 元数据（是否内置、GitHub URL、注册表 ID）
+ *
+ * 使用 SQLite 数据库存储，通过 sql.js 在内存中操作
+ *
+ * @module mcpStore
+ */
+
 import crypto from 'crypto';
 import { Database } from 'sql.js';
 
+/**
+ * MCP 服务器记录
+ * @interface
+ */
 export interface McpServerRecord {
   id: string;
   name: string;
@@ -19,6 +37,11 @@ export interface McpServerRecord {
   updatedAt: number;
 }
 
+/**
+ * MCP 服务器表单数据
+ * 用于创建或更新服务器配置
+ * @interface
+ */
 export interface McpServerFormData {
   name: string;
   description: string;
@@ -55,10 +78,21 @@ interface McpConfigJson {
   registryId?: string;
 }
 
+/**
+ * MCP 服务器存储管理类
+ *
+ * 提供 MCP 服务器的 CRUD 操作和状态管理
+ */
 export class McpStore {
   private db: Database;
   private saveDb: () => void;
 
+  /**
+   * 创建 MCP 存储实例
+   *
+   * @param {Database} db - sql.js 数据库实例
+   * @param {Function} saveDb - 保存数据库的回调函数
+   */
   constructor(db: Database, saveDb: () => void) {
     this.db = db;
     this.saveDb = saveDb;
@@ -115,6 +149,11 @@ export class McpStore {
     return JSON.stringify(config);
   }
 
+  /**
+   * 列出所有 MCP 服务器
+   *
+   * @returns {McpServerRecord[]} 服务器记录列表，按创建时间升序排列
+   */
   listServers(): McpServerRecord[] {
     const result = this.db.exec(
       'SELECT id, name, description, enabled, transport_type, config_json, created_at, updated_at FROM mcp_servers ORDER BY created_at ASC'
@@ -123,6 +162,12 @@ export class McpStore {
     return result[0].values.map((row) => this.deserializeRow(row));
   }
 
+  /**
+   * 获取指定 ID 的 MCP 服务器
+   *
+   * @param {string} id - 服务器 ID
+   * @returns {McpServerRecord | null} 服务器记录，不存在时返回 null
+   */
   getServer(id: string): McpServerRecord | null {
     const result = this.db.exec(
       'SELECT id, name, description, enabled, transport_type, config_json, created_at, updated_at FROM mcp_servers WHERE id = ?',
@@ -132,6 +177,12 @@ export class McpStore {
     return this.deserializeRow(result[0].values[0]);
   }
 
+  /**
+   * 创建新的 MCP 服务器
+   *
+   * @param {McpServerFormData} data - 服务器配置数据
+   * @returns {McpServerRecord} 创建的服务器记录
+   */
   createServer(data: McpServerFormData): McpServerRecord {
     const id = crypto.randomUUID();
     const now = Date.now();
@@ -147,6 +198,13 @@ export class McpStore {
     return this.getServer(id)!;
   }
 
+  /**
+   * 更新 MCP 服务器配置
+   *
+   * @param {string} id - 服务器 ID
+   * @param {Partial<McpServerFormData>} data - 要更新的配置数据
+   * @returns {McpServerRecord | null} 更新后的服务器记录，不存在时返回 null
+   */
   updateServer(id: string, data: Partial<McpServerFormData>): McpServerRecord | null {
     const existing = this.getServer(id);
     if (!existing) return null;
@@ -177,6 +235,12 @@ export class McpStore {
     return this.getServer(id);
   }
 
+  /**
+   * 删除 MCP 服务器
+   *
+   * @param {string} id - 服务器 ID
+   * @returns {boolean} 是否删除成功
+   */
   deleteServer(id: string): boolean {
     const existing = this.getServer(id);
     if (!existing) return false;
@@ -186,6 +250,13 @@ export class McpStore {
     return true;
   }
 
+  /**
+   * 设置 MCP 服务器的启用状态
+   *
+   * @param {string} id - 服务器 ID
+   * @param {boolean} enabled - 是否启用
+   * @returns {boolean} 是否设置成功
+   */
   setEnabled(id: string, enabled: boolean): boolean {
     const existing = this.getServer(id);
     if (!existing) return false;

@@ -1,8 +1,32 @@
+/**
+ * API 服务模块
+ * 
+ * 提供与 AI 模型通信的能力，支持 Anthropic 和 OpenAI 兼容格式
+ * 支持多种模型提供商：OpenAI、DeepSeek、Moonshot、Zhipu、Qwen 等
+ * 
+ * @module services/api
+ */
+
 import { store } from '../store';
 import { configService } from './config';
 import { ChatMessagePayload, ChatUserMessageInput, ImageAttachment } from '../types/chat';
 
+/** 智谱 GLM Coding Plan OpenAI 兼容端点 */
 const ZHIPU_CODING_PLAN_OPENAI_BASE_URL = 'https://open.bigmodel.cn/api/coding/paas/v4';
+/** 智谱 GLM Coding Plan Anthropic 兼容端点 */
+const ZHIPU_CODING_PLAN_ANTHROPIC_BASE_URL = 'https://open.bigmodel.cn/api/anthropic';
+/** Qwen Coding Plan OpenAI 兼容端点 */
+const QWEN_CODING_PLAN_OPENAI_BASE_URL = 'https://coding.dashscope.aliyuncs.com/v1';
+/** Qwen Coding Plan Anthropic 兼容端点 */
+const QWEN_CODING_PLAN_ANTHROPIC_BASE_URL = 'https://coding.dashscope.aliyuncs.com/apps/anthropic';
+/** 火山引擎 Coding Plan OpenAI 兼容端点 */
+const VOLCENGINE_CODING_PLAN_OPENAI_BASE_URL = 'https://ark.cn-beijing.volces.com/api/coding/v3';
+/** 火山引擎 Coding Plan Anthropic 兼容端点 */
+const VOLCENGINE_CODING_PLAN_ANTHROPIC_BASE_URL = 'https://ark.cn-beijing.volces.com/api/coding';
+/** Moonshot Coding Plan OpenAI 兼容端点 */
+const MOONSHOT_CODING_PLAN_OPENAI_BASE_URL = 'https://api.kimi.com/coding/v1';
+/** Moonshot Coding Plan Anthropic 兼容端点 */
+const MOONSHOT_CODING_PLAN_ANTHROPIC_BASE_URL = 'https://api.kimi.com/coding';
 const ZHIPU_CODING_PLAN_ANTHROPIC_BASE_URL = 'https://open.bigmodel.cn/api/anthropic';
 // Qwen Coding Plan 专属端点 (OpenAI 兼容和 Anthropic 兼容)
 const QWEN_CODING_PLAN_OPENAI_BASE_URL = 'https://coding.dashscope.aliyuncs.com/v1';
@@ -14,14 +38,34 @@ const VOLCENGINE_CODING_PLAN_ANTHROPIC_BASE_URL = 'https://ark.cn-beijing.volces
 const MOONSHOT_CODING_PLAN_OPENAI_BASE_URL = 'https://api.kimi.com/coding/v1';
 const MOONSHOT_CODING_PLAN_ANTHROPIC_BASE_URL = 'https://api.kimi.com/coding';
 
+/**
+ * API 配置接口
+ * @interface ApiConfig
+ */
 export interface ApiConfig {
+  /** API 密钥 */
   apiKey: string;
+  /** API 基础 URL */
   baseUrl: string;
+  /** 模型提供商标识 */
   provider?: string;
+  /** API 格式：anthropic 或 openai */
   apiFormat?: 'anthropic' | 'openai';
 }
 
+/**
+ * API 错误类
+ * 封装 API 调用过程中的错误信息
+ * 
+ * @class ApiError
+ * @extends Error
+ */
 export class ApiError extends Error {
+  /**
+   * @param message - 错误消息
+   * @param statusCode - HTTP 状态码（可选）
+   * @param response - 原始响应数据（可选）
+   */
   constructor(
     message: string,
     public statusCode?: number,
@@ -32,18 +76,43 @@ export class ApiError extends Error {
   }
 }
 
-// 生成唯一的请求 ID
+/**
+ * 生成唯一的请求 ID
+ * @returns 格式为 req_{timestamp}_{random} 的字符串
+ */
 const generateRequestId = () => `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
+/**
+ * API 服务类
+ * 处理与 AI 模型的通信，支持 Anthropic 和 OpenAI 兼容格式
+ * 
+ * @class ApiService
+ * 
+ * @example
+ * ```typescript
+ * apiService.setConfig({ apiKey: 'xxx', baseUrl: 'https://api.example.com' });
+ * const result = await apiService.chat('Hello', (content, reasoning) => {
+ *   console.log('Streaming:', content, reasoning);
+ * });
+ * ```
+ */
 class ApiService {
   private config: ApiConfig | null = null;
   private currentRequestId: string | null = null;
   private cleanupFunctions: (() => void)[] = [];
 
+  /**
+   * 设置 API 配置
+   * @param config - API 配置对象
+   */
   setConfig(config: ApiConfig) {
     this.config = config;
   }
 
+  /**
+   * 取消正在进行的请求
+   * @returns 是否成功取消
+   */
   cancelOngoingRequest() {
     if (this.currentRequestId) {
       window.electron.api.cancelStream(this.currentRequestId);
@@ -52,12 +121,21 @@ class ApiService {
     return false;
   }
 
+  /**
+   * 清理资源
+   * 取消所有注册的清理函数并重置状态
+   */
   private cleanup() {
     this.cleanupFunctions.forEach(fn => fn());
     this.cleanupFunctions = [];
     this.currentRequestId = null;
   }
 
+  /**
+   * 规范化 API 格式
+   * @param apiFormat - 原始 API 格式值
+   * @returns 规范化后的 'anthropic' 或 'openai'
+   */
   private normalizeApiFormat(apiFormat: unknown): 'anthropic' | 'openai' {
     if (apiFormat === 'openai') {
       return 'openai';
@@ -65,6 +143,14 @@ class ApiService {
     return 'anthropic';
   }
 
+  /**
+   * 构建 OpenAI 兼容的聊天补全 URL
+   * 处理各种基础 URL 格式和特殊提供商（如 Gemini）
+   * 
+   * @param baseUrl - 基础 URL
+   * @param provider - 提供商标识
+   * @returns 完整的 chat/completions URL
+   */
   private buildOpenAICompatibleChatCompletionsUrl(baseUrl: string, provider: string): string {
     const normalized = baseUrl.trim().replace(/\/+$/, '');
     if (!normalized) {

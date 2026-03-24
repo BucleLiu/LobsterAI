@@ -6,12 +6,21 @@ import path from 'path';
 import initSqlJs, { Database, SqlJsStatic } from 'sql.js';
 import { DB_FILENAME } from './appConstants';
 
+/**
+ * 存储变更事件负载
+ * @template T 值类型
+ * @interface
+ */
 type ChangePayload<T = unknown> = {
+  /** 变更的键 */
   key: string;
+  /** 新值 */
   newValue: T | undefined;
+  /** 旧值 */
   oldValue: T | undefined;
 };
 
+/** 用户记忆迁移标记键 */
 const USER_MEMORIES_MIGRATION_KEY = 'userMemories.migration.v1.completed';
 
 // Pre-read the sql.js WASM binary from disk.
@@ -29,17 +38,42 @@ function loadWasmBinary(): ArrayBuffer {
   return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength);
 }
 
+//**
+ * SQLite 存储管理类
+ *
+ * 管理应用的核心数据存储，包括：
+ * - 键值对存储 (kv)
+ * - 协作会话 (cowork_sessions, cowork_messages)
+ * - 用户记忆 (user_memories, user_memory_sources)
+ * - MCP 服务器 (mcp_servers)
+ *
+ * 使用 sql.js 在内存中操作 SQLite 数据库，定期持久化到文件
+ *
+ * @class
+ */
 export class SqliteStore {
   private db: Database;
   private dbPath: string;
   private emitter = new EventEmitter();
   private static sqlPromise: Promise<SqlJsStatic> | null = null;
 
+  /**
+   * 私有构造函数，使用 SqliteStore.create() 创建实例
+   *
+   * @param {Database} db - sql.js 数据库实例
+   * @param {string} dbPath - 数据库文件路径
+   */
   private constructor(db: Database, dbPath: string) {
     this.db = db;
     this.dbPath = dbPath;
   }
 
+  /**
+   * 创建 SqliteStore 实例
+   *
+   * @param {string} [userDataPath] - 用户数据目录路径，默认使用 app.getPath('userData')
+   * @returns {Promise<SqliteStore>} 存储实例
+   */
   static async create(userDataPath?: string): Promise<SqliteStore> {
     const basePath = userDataPath ?? app.getPath('userData');
     const dbPath = path.join(basePath, DB_FILENAME);
@@ -67,6 +101,13 @@ export class SqliteStore {
     return store;
   }
 
+  /**
+   * 初始化数据库表结构
+   *
+   * 创建所有必要的表和索引，执行数据库迁移
+   *
+   * @param {string} basePath - 基础路径，用于迁移操作
+   */
   private initializeTables(basePath: string) {
     this.db.run(`
       CREATE TABLE IF NOT EXISTS kv (
@@ -244,11 +285,25 @@ export class SqliteStore {
     this.save();
   }
 
+  /**
+   * 保存数据库到文件
+   *
+   * 将内存中的数据库导出并写入到 SQLite 文件
+   */
   save() {
     const data = this.db.export();
     const buffer = Buffer.from(data);
     fs.writeFileSync(this.dbPath, buffer);
   }
+
+  /**
+   * 监听指定键的变更事件
+   *
+   * @template T 值类型
+   * @param {string} key - 要监听的键
+   * @param {Function} callback - 变更回调函数
+   * @returns {Function} 取消监听的函数
+   */
 
   onDidChange<T = unknown>(key: string, callback: (newValue: T | undefined, oldValue: T | undefined) => void) {
     const handler = (payload: ChangePayload<T>) => {
@@ -259,6 +314,13 @@ export class SqliteStore {
     return () => this.emitter.off('change', handler);
   }
 
+  /**
+   * 获取指定键的值
+   *
+   * @template T 值类型
+   * @param {string} key - 键名
+   * @returns {T | undefined} 值，不存在时返回 undefined
+   */
   get<T = unknown>(key: string): T | undefined {
     const result = this.db.exec('SELECT value FROM kv WHERE key = ?', [key]);
     if (!result[0]?.values[0]) return undefined;
@@ -271,6 +333,13 @@ export class SqliteStore {
     }
   }
 
+  /**
+   * 设置指定键的值
+   *
+   * @template T 值类型
+   * @param {string} key - 键名
+   * @param {T} value - 值
+   */
   set<T = unknown>(key: string, value: T): void {
     const oldValue = this.get<T>(key);
     const now = Date.now();
@@ -285,6 +354,11 @@ export class SqliteStore {
     this.emitter.emit('change', { key, newValue: value, oldValue } as ChangePayload<T>);
   }
 
+  /**
+   * 删除指定键
+   *
+   * @param {string} key - 键名
+   */
   delete(key: string): void {
     const oldValue = this.get(key);
     this.db.run('DELETE FROM kv WHERE key = ?', [key]);
@@ -292,12 +366,20 @@ export class SqliteStore {
     this.emitter.emit('change', { key, newValue: undefined, oldValue } as ChangePayload);
   }
 
-  // Expose database for cowork operations
+  /**
+   * 获取数据库实例
+   *
+   * @returns {Database} sql.js 数据库实例
+   */
   getDatabase(): Database {
     return this.db;
   }
 
-  // Expose save method for external use (e.g., CoworkStore)
+  /**
+   * 获取保存函数
+   *
+   * @returns {Function} 保存数据库的函数
+   */
   getSaveFunction(): () => void {
     return () => this.save();
   }

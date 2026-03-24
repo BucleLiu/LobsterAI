@@ -1077,6 +1077,22 @@ const isWebSearchSkillBroken = (skillRoot: string): boolean => {
   return false;
 };
 
+/**
+ * Skill 管理器类
+ *
+ * 负责 Skill 的全生命周期管理：
+ * - 发现：从本地目录、GitHub、npm 等来源发现 Skill
+ * - 安装：下载、解压、安全扫描、依赖安装
+ * - 更新：版本检测、增量更新
+ * - 配置：读取和修改 Skill 配置
+ * - 启用/禁用：控制 Skill 的激活状态
+ * - 删除：清理 Skill 文件
+ *
+ * 安全特性：
+ * - 自动安全扫描（文件系统、网络、代码分析）
+ * - GitHub/npm 来源验证
+ * - 沙箱执行环境
+ */
 export class SkillManager {
   private watchers: fs.FSWatcher[] = [];
   private notifyTimer: NodeJS.Timeout | null = null;
@@ -1089,12 +1105,27 @@ export class SkillManager {
     timer: NodeJS.Timeout;
   }>();
 
+  /**
+   * 创建 SkillManager 实例
+   *
+   * @param {Function} getStore - 获取 SqliteStore 的函数
+   */
   constructor(private getStore: () => SqliteStore) {}
 
+/**
+   * 获取 Skill 根目录路径
+   *
+   * @returns {string} Skill 根目录的绝对路径
+   */
   getSkillsRoot(): string {
     return path.resolve(app.getPath('userData'), SKILLS_DIR_NAME);
   }
 
+  /**
+   * 确保 Skill 根目录存在
+   *
+   * @returns {string} Skill 根目录路径
+   */
   ensureSkillsRoot(): string {
     const root = this.getSkillsRoot();
     if (!fs.existsSync(root)) {

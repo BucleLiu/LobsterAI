@@ -1,13 +1,30 @@
+/**
+ * 系统托盘管理模块
+ *
+ * 负责管理系统托盘图标和菜单
+ * 支持 Windows、macOS 和 Linux 平台
+ *
+ * @module trayManager
+ */
+
 import { app, Tray, Menu, nativeImage, BrowserWindow } from 'electron';
 import path from 'path';
 import { APP_NAME } from './appConstants';
 import { t } from './i18n';
 
+/** 托盘实例 */
 let tray: Tray | null = null;
 let contextMenu: Menu | null = null;
 let clickHandler: (() => void) | null = null;
 let rightClickHandler: (() => void) | null = null;
 
+/**
+ * 获取托盘图标路径
+ *
+ * 根据平台返回对应的图标文件路径
+ *
+ * @returns {string} 图标文件的绝对路径
+ */
 function getTrayIconPath(): string {
   const isMac = process.platform === 'darwin';
   const isWin = process.platform === 'win32';
@@ -26,6 +43,15 @@ function getTrayIconPath(): string {
   return path.join(basePath, 'tray-icon.png');
 }
 
+/**
+ * 获取托盘菜单标签
+ *
+ * @returns {Object} 菜单标签对象
+ * @returns {string} returns.showWindow - 显示窗口
+ * @returns {string} returns.newTask - 新建任务
+ * @returns {string} returns.settings - 设置
+ * @returns {string} returns.quit - 退出
+ */
 function getLabels(): { showWindow: string; newTask: string; settings: string; quit: string } {
   return {
     showWindow: t('trayShowWindow'),
@@ -82,6 +108,12 @@ function buildContextMenu(getWindow: () => BrowserWindow | null): Menu {
   ]);
 }
 
+/**
+ * 创建系统托盘
+ *
+ * @param {Function} getWindow - 获取主窗口的函数
+ * @returns {Tray} 创建的托盘实例
+ */
 export function createTray(getWindow: () => BrowserWindow | null): Tray {
   if (tray) {
     return tray;
@@ -123,15 +155,29 @@ export function createTray(getWindow: () => BrowserWindow | null): Tray {
   return tray;
 }
 
+/**
+ * 更新托盘菜单
+ *
+ * @param {Function} getWindow - 获取主窗口的函数
+ */
 export function updateTrayMenu(getWindow: () => BrowserWindow | null): void {
   if (!tray) return;
   contextMenu = buildContextMenu(getWindow);
 }
 
+/**
+ * 销毁托盘实例
+ *
+ * 清理托盘相关的所有资源和事件监听器
+ */
 export function destroyTray(): void {
   if (tray) {
-    if (clickHandler) tray.removeListener('click', clickHandler);
-    if (rightClickHandler) tray.removeListener('right-click', rightClickHandler);
+    try {
+      if (clickHandler) tray.removeListener('click', clickHandler);
+      if (rightClickHandler) tray.removeListener('right-click', rightClickHandler);
+    } catch (e) {
+      // 忽略清理时的错误，托盘可能已被系统销毁
+    }
     tray.destroy();
     tray = null;
     contextMenu = null;

@@ -1,7 +1,29 @@
+/**
+ * 技能服务模块
+ * 
+ * 提供技能的管理、加载、安装和配置功能
+ * 支持本地技能和技能市场
+ * 
+ * @module services/skill
+ */
+
 import { Skill, MarketplaceSkill, MarketTag, LocalSkillInfo, LocalizedText } from '../types/skill';
 import { getSkillStoreUrl } from './endpoints';
 import { i18nService } from './i18n';
 
+/**
+ * 解析本地化文本
+ * 根据当前语言返回对应的文本内容
+ * 
+ * @param text - 字符串或本地化文本对象
+ * @returns 当前语言的文本
+ * 
+ * @example
+ * ```typescript
+ * const text = resolveLocalizedText({ zh: '你好', en: 'Hello' });
+ * // 如果当前语言是中文，返回 '你好'
+ * ```
+ */
 export function resolveLocalizedText(text: string | LocalizedText): string {
   if (!text) return '';
   if (typeof text === 'string') return text;
@@ -9,6 +31,9 @@ export function resolveLocalizedText(text: string | LocalizedText): string {
   return text[lang] || text.en || '';
 }
 
+/**
+ * 邮箱连通性检查项
+ */
 type EmailConnectivityCheck = {
   code: 'imap_connection' | 'smtp_connection';
   level: 'pass' | 'fail';
@@ -16,18 +41,39 @@ type EmailConnectivityCheck = {
   durationMs: number;
 };
 
+/**
+ * 邮箱连通性测试结果
+ */
 type EmailConnectivityTestResult = {
   testedAt: number;
   verdict: 'pass' | 'fail';
   checks: EmailConnectivityCheck[];
 };
 
+/**
+ * 技能服务类
+ * 管理技能的加载、安装、配置和删除
+ * 
+ * @class SkillService
+ * 
+ * @example
+ * ```typescript
+ * await skillService.init();
+ * const skills = skillService.getSkills();
+ * ```
+ */
 class SkillService {
   private skills: Skill[] = [];
   private initialized = false;
+  /** 本地技能描述缓存，用于国际化 */
   private localSkillDescriptions: Map<string, string | LocalizedText> = new Map();
+  /** 市场技能描述缓存，用于国际化 */
   private marketplaceSkillDescriptions: Map<string, string | LocalizedText> = new Map();
 
+  /**
+   * 初始化技能服务
+   * 加载所有已安装的技能
+   */
   async init(): Promise<void> {
     if (this.initialized) return;
     await this.loadSkills();
