@@ -1,0 +1,23 @@
+src/main/main.ts
+  dea75fa78fa672c0 4221-4222,4226-4234,4239-4246,4251
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.17",
+  "base_commit_sha": "31f20c2881cd93f57609d6c35cb7b51d90358ce5",
+  "prompts": {
+    "dea75fa78fa672c0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "27e4cd52-faa1-4e16-bdf8-35944f350641",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "liuwenlong01 <liuwenlong01@corp.netease.com>",
+      "messages": [],
+      "total_additions": 20,
+      "total_deletions": 6,
+      "accepted_lines": 20,
+      "overriden_lines": 0
+    }
+  }
+}
