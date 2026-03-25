@@ -1,0 +1,27 @@
+src/main/main.ts
+  461fb59e2d988442 3660-3672,4234,4237-4252
+src/renderer/types/electron.d.ts
+  461fb59e2d988442 301
+src/main/preload.ts
+  461fb59e2d988442 94-95,97-101
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.17",
+  "base_commit_sha": "7f0854265d8f98d679d66117c23e0320022a87ea",
+  "prompts": {
+    "461fb59e2d988442": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "35c178b1-1100-4880-ab09-0952c384f429",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "liuwenlong01 <liuwenlong01@corp.netease.com>",
+      "messages": [],
+      "total_additions": 38,
+      "total_deletions": 7,
+      "accepted_lines": 38,
+      "overriden_lines": 0
+    }
+  }
+}
