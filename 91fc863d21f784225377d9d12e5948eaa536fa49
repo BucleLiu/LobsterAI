@@ -1,0 +1,23 @@
+src/main/im/xiaomifengGateway.ts
+  17fb071c4439e347 834-835
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.17",
+  "base_commit_sha": "91fc863d21f784225377d9d12e5948eaa536fa49",
+  "prompts": {
+    "17fb071c4439e347": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8f8c6ec2-ad0c-472a-929a-5b5e3fa0fff0",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "liuwenlong01 <liuwenlong01@corp.netease.com>",
+      "messages": [],
+      "total_additions": 2,
+      "total_deletions": 1,
+      "accepted_lines": 2,
+      "overriden_lines": 0
+    }
+  }
+}
