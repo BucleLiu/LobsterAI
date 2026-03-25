@@ -1,0 +1,37 @@
+src/main/main.ts
+  461fb59e2d988442 4224-4225,4235-4238,4247-4250,4252-4255
+  dea75fa78fa672c0 4221-4222,4226-4234,4239-4246,4251
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.17",
+  "base_commit_sha": "6f260e310199c4e85a2e489de9a504f70f8482b9",
+  "prompts": {
+    "461fb59e2d988442": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "35c178b1-1100-4880-ab09-0952c384f429",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "liuwenlong01 <liuwenlong01@corp.netease.com>",
+      "messages": [],
+      "total_additions": 19,
+      "total_deletions": 2,
+      "accepted_lines": 14,
+      "overriden_lines": 0
+    },
+    "dea75fa78fa672c0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "27e4cd52-faa1-4e16-bdf8-35944f350641",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "liuwenlong01 <liuwenlong01@corp.netease.com>",
+      "messages": [],
+      "total_additions": 20,
+      "total_deletions": 6,
+      "accepted_lines": 20,
+      "overriden_lines": 0
+    }
+  }
+}
