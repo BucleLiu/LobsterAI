@@ -3656,6 +3656,19 @@ if (!gotTheLock) {
   });
 
   ipcMain.handle('shell:openExternal', async (_event, url: string) => {
+    // Only allow safe protocols to prevent dangerous URI scheme abuse
+    // (e.g. ms-msdt: / search-ms: on Windows, smb: for NTLM credential theft).
+    const ALLOWED_PROTOCOLS = ['https:', 'http:', 'mailto:'];
+    let parsedProtocol: string;
+    try {
+      parsedProtocol = new URL(url).protocol;
+    } catch {
+      return { success: false, error: 'Invalid URL' };
+    }
+    if (!ALLOWED_PROTOCOLS.includes(parsedProtocol)) {
+      console.warn(`[Shell] blocked openExternal with disallowed protocol: ${parsedProtocol}`);
+      return { success: false, error: `Protocol '${parsedProtocol}' is not allowed` };
+    }
     try {
       await shell.openExternal(url);
       return { success: true };

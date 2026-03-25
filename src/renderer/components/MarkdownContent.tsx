@@ -143,10 +143,11 @@ const getHrefProtocol = (href: string): string | null => {
   return match[1].toLowerCase();
 };
 
+const SAFE_EXTERNAL_PROTOCOLS = new Set(['http', 'https', 'mailto']);
 const isExternalHref = (href: string): boolean => {
   const protocol = getHrefProtocol(href);
   if (!protocol) return false;
-  return protocol !== 'file';
+  return SAFE_EXTERNAL_PROTOCOLS.has(protocol);
 };
 
 const openExternalViaDefaultBrowser = async (url: string): Promise<boolean> => {
