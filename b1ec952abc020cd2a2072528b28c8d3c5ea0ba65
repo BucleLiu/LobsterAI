@@ -1,0 +1,23 @@
+src/main/main.ts
+  17fb071c4439e347 3702,3729-3731
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.17",
+  "base_commit_sha": "b1ec952abc020cd2a2072528b28c8d3c5ea0ba65",
+  "prompts": {
+    "17fb071c4439e347": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8f8c6ec2-ad0c-472a-929a-5b5e3fa0fff0",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "liuwenlong01 <liuwenlong01@corp.netease.com>",
+      "messages": [],
+      "total_additions": 4,
+      "total_deletions": 2,
+      "accepted_lines": 4,
+      "overriden_lines": 0
+    }
+  }
+}
