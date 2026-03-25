@@ -1,0 +1,40 @@
+docs/mcp.md
+  a3a90350725c9c47 1-128
+docs/skills.md
+  a3a90350725c9c47 1-118
+docs/cowork.md
+  a3a90350725c9c47 1-134
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.17",
+  "base_commit_sha": "d34a90e4df453e6fbb47b248478a5402b99b54cf",
+  "prompts": {
+    "3e1673e63cab5f94": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "141593ac-f703-4519-97cc-7c306f6c2777",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "liuwenlong01 <liuwenlong01@corp.netease.com>",
+      "messages": [],
+      "total_additions": 1142,
+      "total_deletions": 0,
+      "accepted_lines": 1142,
+      "overriden_lines": 0
+    },
+    "a3a90350725c9c47": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1a059eb9-2395-4f37-b48f-09cbc2684b29",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "liuwenlong01 <liuwenlong01@corp.netease.com>",
+      "messages": [],
+      "total_additions": 380,
+      "total_deletions": 0,
+      "accepted_lines": 380,
+      "overriden_lines": 0
+    }
+  }
+}
