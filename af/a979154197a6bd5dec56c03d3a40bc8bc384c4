@@ -1,0 +1,27 @@
+tests/reminderText.test.mjs
+  4a8028e76725c935 1-217
+tests/skillSecurityPromptAudit.test.mjs
+  4a8028e76725c935 1-269
+tests/skillSecurityRules.test.mjs
+  4a8028e76725c935 2,5-18,20-22,24-25,27,36-37,42-45,51-52,58-59,61,69,76,84,88,92,100,104,108,112,116,120,124,128,132,140,144,152,156,160,164,168,172,176,180,184,188,192,200,204,208,216,220-221,229,233,237,241,249,253,257,265,269,273,282-283,287
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.19",
+  "base_commit_sha": "afa979154197a6bd5dec56c03d3a40bc8bc384c4",
+  "prompts": {
+    "4a8028e76725c935": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e00c1f49-3454-426f-ad65-5f5cfe7a878e",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "liuwenlong01 <liuwenlong01@corp.netease.com>",
+      "messages": [],
+      "total_additions": 774,
+      "total_deletions": 0,
+      "accepted_lines": 564,
+      "overriden_lines": 0
+    }
+  }
+}
