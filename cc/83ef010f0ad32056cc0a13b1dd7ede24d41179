@@ -1,0 +1,27 @@
+tests/coworkMemoryExtractor.test.mjs
+  3e1673e63cab5f94 1-424
+tests/coworkFormatTransform.test.mjs
+  3e1673e63cab5f94 1-463
+tests/dingtalkMediaParser.test.mjs
+  3e1673e63cab5f94 1-282
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.17",
+  "base_commit_sha": "cc83ef010f0ad32056cc0a13b1dd7ede24d41179",
+  "prompts": {
+    "3e1673e63cab5f94": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "141593ac-f703-4519-97cc-7c306f6c2777",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "liuwenlong01 <liuwenlong01@corp.netease.com>",
+      "messages": [],
+      "total_additions": 1169,
+      "total_deletions": 0,
+      "accepted_lines": 2311,
+      "overriden_lines": 0
+    }
+  }
+}
