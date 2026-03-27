@@ -1,0 +1,27 @@
+src/main/libs/skillSecurity/skillSecurityRules.test.ts
+  4a8028e76725c935 1-288
+src/scheduled-task/reminderText.test.ts
+  4a8028e76725c935 1-233
+src/main/libs/skillSecurity/skillSecurityPromptAudit.test.ts
+  4a8028e76725c935 1-309
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.19",
+  "base_commit_sha": "2c26e47965398991d8a00402badf4afd7fffa597",
+  "prompts": {
+    "4a8028e76725c935": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e00c1f49-3454-426f-ad65-5f5cfe7a878e",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "liuwenlong01 <liuwenlong01@corp.netease.com>",
+      "messages": [],
+      "total_additions": 835,
+      "total_deletions": 5,
+      "accepted_lines": 830,
+      "overriden_lines": 0
+    }
+  }
+}
