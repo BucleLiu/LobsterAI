@@ -1,0 +1,29 @@
+src/renderer/components/skills/SkillsManager.tsx
+  f56a0b5426616ac2 16,27-31,283-287,418-425
+src/renderer/services/i18n.ts
+  f56a0b5426616ac2 555,1723
+src/renderer/components/skills/SkillsView.tsx
+  f56a0b5426616ac2 12,16,50
+src/renderer/App.tsx
+  f56a0b5426616ac2 26,270-276,667
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.22",
+  "base_commit_sha": "05509b4d40200f6adcee294048b1d74d24bf63c9",
+  "prompts": {
+    "f56a0b5426616ac2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3ae0a6e9-00ab-43f5-8f88-df44d9a45f61",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "liuwenlong01 <liuwenlong01@corp.netease.com>",
+      "messages": [],
+      "total_additions": 96,
+      "total_deletions": 57,
+      "accepted_lines": 58,
+      "overriden_lines": 0
+    }
+  }
+}
