@@ -1,0 +1,23 @@
+src/main/presetAgents.ts
+  d93892088033d35e 190-410
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.22",
+  "base_commit_sha": "e93257c391dae8ac806b144154ef788e71a0991c",
+  "prompts": {
+    "d93892088033d35e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "bbbb97b0-9a15-4759-ae56-85ecbc969187",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "liuwenlong01 <liuwenlong01@corp.netease.com>",
+      "messages": [],
+      "total_additions": 221,
+      "total_deletions": 0,
+      "accepted_lines": 221,
+      "overriden_lines": 0
+    }
+  }
+}
