@@ -1,0 +1,25 @@
+src/renderer/components/cowork/CoworkPromptInput.tsx
+  ba965b74063a5fd1 1,95-97,126-129,134-138,165-172,239-375,377-381,453-479,781-844,847,909,1001,1048
+src/renderer/services/i18n.ts
+  ba965b74063a5fd1 1166,2333
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.22",
+  "base_commit_sha": "0cbf00c7323763085d5f33063560a50faae73adc",
+  "prompts": {
+    "ba965b74063a5fd1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b30f2380-7309-4044-82f6-b8a4ac747fef",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "liuwenlong01 <liuwenlong01@corp.netease.com>",
+      "messages": [],
+      "total_additions": 557,
+      "total_deletions": 91,
+      "accepted_lines": 478,
+      "overriden_lines": 0
+    }
+  }
+}
