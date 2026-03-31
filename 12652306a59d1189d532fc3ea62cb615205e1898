@@ -1,0 +1,27 @@
+tests/coworkMemoryJudge.test.mjs
+  8c3df119ad1a142b 1-241
+tests/openclawMemoryFile.test.mjs
+  8c3df119ad1a142b 1-444
+tests/scheduledTaskMigrate.test.mjs
+  8c3df119ad1a142b 1-431
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.23",
+  "base_commit_sha": "12652306a59d1189d532fc3ea62cb615205e1898",
+  "prompts": {
+    "8c3df119ad1a142b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5bc902e0-e6d7-4ec5-88ba-96e6140d78b7",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "liuwenlong01 <liuwenlong01@corp.netease.com>",
+      "messages": [],
+      "total_additions": 1127,
+      "total_deletions": 11,
+      "accepted_lines": 1116,
+      "overriden_lines": 0
+    }
+  }
+}
