@@ -1,0 +1,27 @@
+tests/commandSafety.test.mjs
+  14e86e5e200ff7ae 1-276
+tests/imPairingStore.test.mjs
+  14e86e5e200ff7ae 1-497
+tests/skillSecurityScannerMerge.test.mjs
+  14e86e5e200ff7ae 1-288
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.3",
+  "base_commit_sha": "7967e9c53ee65fa32b037d7d15a8df5de76144fb",
+  "prompts": {
+    "14e86e5e200ff7ae": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4eeda3af-1510-44db-9cce-34f0ef488f1a",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "liuwenlong01",
+      "messages": [],
+      "total_additions": 1061,
+      "total_deletions": 0,
+      "accepted_lines": 1061,
+      "overriden_lines": 0
+    }
+  }
+}
