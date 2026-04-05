@@ -1,0 +1,29 @@
+src/renderer/services/scheduledTask.ts
+  0d461d4ecf62f351 122,124,134
+src/renderer/components/scheduledTasks/ScheduledTasksView.tsx
+  0d461d4ecf62f351 178-181
+src/renderer/services/i18n.ts
+  0d461d4ecf62f351 1157,2435
+src/renderer/components/scheduledTasks/TaskForm.tsx
+  0d461d4ecf62f351 30,131,235-259,266,281-290,703-717
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "87dac8f93a290e36fd57f1bcd3f89b69d8dce2ef",
+  "prompts": {
+    "0d461d4ecf62f351": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ed0e5213-9d35-4ddc-ae63-70915bb85625",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "liuwenlong01",
+      "messages": [],
+      "total_additions": 87,
+      "total_deletions": 49,
+      "accepted_lines": 70,
+      "overriden_lines": 0
+    }
+  }
+}
