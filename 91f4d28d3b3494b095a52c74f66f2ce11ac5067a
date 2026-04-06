@@ -1,0 +1,43 @@
+src/main/i18n.ts
+  85108b9ebad38cc4 191-196,372-377
+src/main/main.ts
+  85108b9ebad38cc4 1105-1129
+src/renderer/components/scheduledTasks/TaskForm.tsx
+  85108b9ebad38cc4 533
+src/main/libs/agentEngine/openclawRuntimeAdapter.ts
+  85108b9ebad38cc4 3958-3973
+src/renderer/services/i18n.ts
+  85108b9ebad38cc4 1259,2537
+src/main/nativeNotificationService.ts
+  85108b9ebad38cc4 1,3-57
+src/scheduledTask/constants.ts
+  85108b9ebad38cc4 40
+src/scheduledTask/cronJobService.ts
+  85108b9ebad38cc4 255-262,305-307,310,441-442,461-468,512,546,674,693,698-701
+src/renderer/components/scheduledTasks/utils.ts
+  85108b9ebad38cc4 261-263,276-278
+src/main/libs/openclawChannelSessionSync.ts
+  85108b9ebad38cc4 291-296,533-534,537-547
+src/main/ipcHandlers/scheduledTask/helpers.ts
+  85108b9ebad38cc4 2,67-69
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "91f4d28d3b3494b095a52c74f66f2ce11ac5067a",
+  "prompts": {
+    "85108b9ebad38cc4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "cb1fd34d-36a4-4da0-bd34-cdd1ce7be61f",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "liuwenlong01",
+      "messages": [],
+      "total_additions": 339,
+      "total_deletions": 107,
+      "accepted_lines": 174,
+      "overriden_lines": 1
+    }
+  }
+}
