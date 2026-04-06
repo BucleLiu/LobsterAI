@@ -1,0 +1,29 @@
+src/renderer/services/i18n.ts
+  c6edf882c92d95cf 1164,2442
+src/main/ipcHandlers/scheduledTask/handlers.ts
+  c6edf882c92d95cf 129-137
+src/renderer/components/scheduledTasks/utils.ts
+  c6edf882c92d95cf 269
+src/renderer/components/scheduledTasks/TaskForm.tsx
+  c6edf882c92d95cf 98,152-155,158-159,235-238,278-281,723
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "39f24a53ad5ab70613b5a71d052aa3aecccde9b4",
+  "prompts": {
+    "c6edf882c92d95cf": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d66e70a9-7681-48cd-926b-d8ba430fab64",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "liuwenlong01",
+      "messages": [],
+      "total_additions": 28,
+      "total_deletions": 10,
+      "accepted_lines": 28,
+      "overriden_lines": 0
+    }
+  }
+}
