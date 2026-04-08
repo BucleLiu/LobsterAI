@@ -1,0 +1,23 @@
+src/main/main.ts
+  688245e49f7a3258 1149,1153-1158
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "de0eac69d3fd6e451c551d0dc3452392de821828",
+  "prompts": {
+    "688245e49f7a3258": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4abe6e7d-8d4f-4428-b8e8-0993d47c345f",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "liuwenlong01",
+      "messages": [],
+      "total_additions": 7,
+      "total_deletions": 1,
+      "accepted_lines": 7,
+      "overriden_lines": 0
+    }
+  }
+}
