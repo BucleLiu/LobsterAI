@@ -1,0 +1,37 @@
+src/renderer/types/electron.d.ts
+  688245e49f7a3258 245-250,274
+src/main/skillUsageStore.ts
+  688245e49f7a3258 1-56
+src/main/main.ts
+  688245e49f7a3258 89,648,842-848,2370-2378,2629-2639,2716-2726
+src/renderer/services/i18n.ts
+  688245e49f7a3258 635-637,1947-1949
+src/renderer/components/skills/SkillsManager.tsx
+  688245e49f7a3258 15,29,94-95,135-145,664-677,947-1002
+src/main/preload.ts
+  688245e49f7a3258 28
+src/renderer/types/skill.ts
+  688245e49f7a3258 43-48
+src/renderer/services/skill.ts
+  688245e49f7a3258 1,264-275
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "4b81222fec9a8eb9ee3ceecd9d4c924927859b6a",
+  "prompts": {
+    "688245e49f7a3258": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4abe6e7d-8d4f-4428-b8e8-0993d47c345f",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "liuwenlong01",
+      "messages": [],
+      "total_additions": 215,
+      "total_deletions": 3,
+      "accepted_lines": 215,
+      "overriden_lines": 0
+    }
+  }
+}
