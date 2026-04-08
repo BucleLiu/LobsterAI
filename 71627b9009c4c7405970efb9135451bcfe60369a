@@ -1,0 +1,25 @@
+src/renderer/services/i18n.ts
+  688245e49f7a3258 638-639,1952-1953
+src/renderer/components/skills/SkillsManager.tsx
+  688245e49f7a3258 96,236-242,966-990,992,1034
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "71627b9009c4c7405970efb9135451bcfe60369a",
+  "prompts": {
+    "688245e49f7a3258": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4abe6e7d-8d4f-4428-b8e8-0993d47c345f",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "liuwenlong01",
+      "messages": [],
+      "total_additions": 39,
+      "total_deletions": 1,
+      "accepted_lines": 39,
+      "overriden_lines": 0
+    }
+  }
+}
