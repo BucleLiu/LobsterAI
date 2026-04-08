@@ -1,0 +1,23 @@
+src/main/ipcHandlers/scheduledTask/handlers.ts
+  704238f956c41446 2,179-181
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "c6fa1400a17b956541e094d860c113a46b7802fa",
+  "prompts": {
+    "704238f956c41446": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6b08b0a7-bee7-4950-9f9c-fe99913b16bb",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "liuwenlong01",
+      "messages": [],
+      "total_additions": 5,
+      "total_deletions": 8,
+      "accepted_lines": 4,
+      "overriden_lines": 0
+    }
+  }
+}
