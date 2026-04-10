@@ -1,0 +1,57 @@
+package.json
+  5e5a1366ae925dd9 138
+src/renderer/types/avatar.ts
+  5e5a1366ae925dd9 1-16
+src/renderer/components/avatars/presets/AuroraAvatar.tsx
+  5e5a1366ae925dd9 1-48
+src/renderer/config.ts
+  5e5a1366ae925dd9 335
+src/renderer/services/avatar.ts
+  5e5a1366ae925dd9 1-146
+src/renderer/components/avatars/presets/FlameAvatar.tsx
+  5e5a1366ae925dd9 1-35
+src/renderer/utils/imageUtils.ts
+  5e5a1366ae925dd9 1-131
+src/renderer/services/i18n.ts
+  5e5a1366ae925dd9 1316-1334,2643-2661
+src/renderer/components/AvatarSettingsModal.tsx
+  5e5a1366ae925dd9 1-2,4-7,9-139,141-164,166-190,192-203,206-233,235-244,246-251,253-260
+src/renderer/components/LoginButton.tsx
+  5e5a1366ae925dd9 7-8,229,258-264,268-274,276-298,300
+src/renderer/components/avatars/presets/index.ts
+  5e5a1366ae925dd9 1-27
+src/renderer/components/avatars/presets/OceanAvatar.tsx
+  5e5a1366ae925dd9 1-59
+src/renderer/store/slices/authSlice.ts
+  5e5a1366ae925dd9 2,9-10
+src/renderer/components/avatars/presets/SunsetAvatar.tsx
+  5e5a1366ae925dd9 1-57
+src/renderer/components/avatars/presets/NebulaAvatar.tsx
+  5e5a1366ae925dd9 1-59
+src/renderer/components/avatars/presets/ForestAvatar.tsx
+  5e5a1366ae925dd9 1-59
+src/renderer/config/avatars.ts
+  5e5a1366ae925dd9 1-46
+src/renderer/components/AvatarDisplay.tsx
+  5e5a1366ae925dd9 1-2,4-119
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "6badd917f161feb5d4bf9196b632ee707fa70dbc",
+  "prompts": {
+    "5e5a1366ae925dd9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "db090a35-fc3a-47ce-b448-a3719c3a5aa7",
+        "model": "kimi-k2.5"
+      },
+      "human_author": "liuwenlong01",
+      "messages": [],
+      "total_additions": 1575,
+      "total_deletions": 77,
+      "accepted_lines": 1495,
+      "overriden_lines": 25
+    }
+  }
+}
