@@ -1,0 +1,40 @@
+src/renderer/components/AvatarSettingsModal.tsx
+  53662068e37f55ac 1,18,21,34,38,41,67-69,86-89,96-106,108-121,124-142,146,148-149,152,154,159-188,192-200,204-206,216,218-219,230-231,234,243,246,253
+src/renderer/components/AvatarDisplay.tsx
+  53662068e37f55ac 6,9-14,60,62-66
+src/renderer/services/i18n.ts
+  53662068e37f55ac 1335,2663
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "c51cd26f273f5b3bc15568869ed033d87d62ffac",
+  "prompts": {
+    "53662068e37f55ac": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5d21f594-4a32-4b5f-a878-17bdd1dc3b7a",
+        "model": "kimi-k2.5"
+      },
+      "human_author": "liuwenlong01",
+      "messages": [],
+      "total_additions": 130,
+      "total_deletions": 106,
+      "accepted_lines": 130,
+      "overriden_lines": 0
+    },
+    "5e5a1366ae925dd9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "db090a35-fc3a-47ce-b448-a3719c3a5aa7",
+        "model": "kimi-k2.5"
+      },
+      "human_author": "liuwenlong01",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 274,
+      "overriden_lines": 44
+    }
+  }
+}
