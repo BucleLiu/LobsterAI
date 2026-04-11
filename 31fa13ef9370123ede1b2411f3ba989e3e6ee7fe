@@ -1,0 +1,38 @@
+src/renderer/components/mcp/McpServerFormModal.tsx
+  ebe9f0f8b03decf9 10,20,27,95-116,130,265-267
+src/renderer/components/mcp/McpManager.tsx
+  ebe9f0f8b03decf9 224,257-292,639-673,800,805
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "31fa13ef9370123ede1b2411f3ba989e3e6ee7fe",
+  "prompts": {
+    "5e5a1366ae925dd9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "db090a35-fc3a-47ce-b448-a3719c3a5aa7",
+        "model": "kimi-k2.5"
+      },
+      "human_author": "liuwenlong01",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 0,
+      "overriden_lines": 0
+    },
+    "ebe9f0f8b03decf9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fad53b7e-cee7-4800-91a6-6ac481e22445",
+        "model": "kimi-k2.5"
+      },
+      "human_author": "liuwenlong01",
+      "messages": [],
+      "total_additions": 123,
+      "total_deletions": 23,
+      "accepted_lines": 103,
+      "overriden_lines": 0
+    }
+  }
+}
