@@ -1,0 +1,23 @@
+src/renderer/components/AvatarSettingsModal.tsx
+  5e5a1366ae925dd9 41,45-50,61-62,129,135,148,150,152,157-159,183-184,190,196-198
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "e5b10b428ef0bf8daf8ece85bf97c8f537d0bad3",
+  "prompts": {
+    "5e5a1366ae925dd9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "db090a35-fc3a-47ce-b448-a3719c3a5aa7",
+        "model": "kimi-k2.5"
+      },
+      "human_author": "liuwenlong01",
+      "messages": [],
+      "total_additions": 23,
+      "total_deletions": 30,
+      "accepted_lines": 370,
+      "overriden_lines": 14
+    }
+  }
+}
